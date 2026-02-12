@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Play, BookOpen, List } from "lucide-react";
 
-const LearningResources = () => {
+/*const LearningResources = () => {
   const [activeTab, setActiveTab] = useState("videos");
 
   const videos = [
@@ -66,6 +66,146 @@ const LearningResources = () => {
         "Extend your growing season"
       ]
     }
+  ];
+
+  const essentials = [
+    "Garden gloves",
+    "Pruning shears",
+    "Garden trowel",
+    "Watering can",
+    "Garden fork",
+    "Wheelbarrow",
+    "Garden hose with adjustable nozzle",
+    "Garden rake",
+    "Compost bin",
+    "Plant labels"
+  ];
+
+  const openYoutubeVideo = (videoId?: string) => {
+     if (videoId) {
+       window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank');
+     }
+   };*/
+const LearningResources = () => {
+  const [activeTab, setActiveTab] = useState("videos");
+
+  const videos = [
+    {
+      id: 1,
+      title: "Getting Started with Gardening",
+      thumbnail: "https://i.ytimg.com/vi/BO8yuSTc3fo/maxresdefault.jpg",
+      duration: "11 min",
+      description: "Learn the basics of setting up your first garden.",
+      videoId: "BO8yuSTc3fo"
+    },
+    {
+      id: 2,
+      title: "Seasonal Planting Guide",
+      thumbnail: "https://i.ytimg.com/vi/1HtBMfbJ_nY/maxresdefault.jpg",
+      duration: "21 min",
+      description: "Understand what to plant during different seasons.",
+      videoId: "1HtBMfbJ_nY"
+    },
+    {
+      id: 3,
+      title: "Organic Pest Control",
+      thumbnail: "https://i.ytimg.com/vi/_1BdRzoN-50/maxresdefault.jpg",
+      duration: "30 min",
+      description: "Natural ways to keep pests away from your garden.",
+      videoId: "_1BdRzoN-50"
+    },
+    {
+  id: 4,
+  title: "Plant Propagation for Beginners",
+  thumbnail: "https://i.ytimg.com/vi/WHiv1OvXGcI/maxresdefault.jpg",
+  duration: "12 min",
+  description: "Learn 4 simple methods to propagate plants and multiply your garden easily.",
+  videoId: "WHiv1OvXGcI"
+},
+{
+  id: 5,
+  title: "Indoor Plant Care Basics",
+  thumbnail: "https://i.ytimg.com/vi/IbWCleprbkU/maxresdefault.jpg",
+  duration: "15 min",
+  description: "Essential tips for watering, lighting and maintaining healthy indoor plants.",
+  videoId: "IbWCleprbkU"
+},
+{
+  id: 6,
+  title: "How to Repot Plants Correctly",
+  thumbnail: "https://i.ytimg.com/vi/fqF7dYpqU28/maxresdefault.jpg",
+  duration: "8 min",
+  description: "Step-by-step guide to repotting plants without damaging roots.",
+  videoId: "fqF7dYpqU28"
+},
+{
+  id: 7,
+  title: "Soil Types and How to Improve Them",
+  thumbnail: "https://i.ytimg.com/vi/dlGQ9YzZ2ZQ/maxresdefault.jpg",
+  duration: "10 min",
+  description: "Understand soil composition and how to make it perfect for plant growth.",
+  videoId: "dlGQ9YzZ2ZQ"
+},
+{
+  id: 8,
+  title: "Beginner Guide to Composting",
+  thumbnail: "https://i.ytimg.com/vi/0dS6b0pHk3Y/maxresdefault.jpg",
+  duration: "9 min",
+  description: "Turn kitchen waste into nutrient-rich compost for your garden.",
+  videoId: "0dS6b0pHk3Y"
+}
+
+  ];
+
+  const guides = [
+    {
+      id: 1,
+      title: "Complete Beginner's Guide",
+      image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?q=80&w=2940&auto=format&fit=crop",
+      steps: [
+        "Choose the right location",
+        "Prepare your soil",
+        "Select appropriate plants",
+        "Establish a watering routine",
+        "Learn basic maintenance"
+      ]
+    },
+    {
+      id: 2,
+      title: "Vegetable Garden Guide",
+      image: "https://images.unsplash.com/photo-1592419044706-39796d40f98c?q=80&w=2940&auto=format&fit=crop",
+      steps: [
+        "Plan your vegetable layout",
+        "Understand companion planting",
+        "Implement crop rotation",
+        "Learn to harvest correctly",
+        "Extend your growing season"
+      ]
+    },
+    {
+  id: 3,
+  title: "Herb Garden Guide",
+  image: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=2940&auto=format&fit=crop",
+  steps: [
+    "Choose easy herbs like basil, mint, coriander",
+    "Ensure 4-6 hours of sunlight",
+    "Use well-draining soil",
+    "Trim regularly to promote growth",
+    "Harvest leaves correctly"
+  ]
+  },
+ {
+  id: 4,
+  title: "Balcony Gardening Guide",
+  image: "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?q=80&w=2940&auto=format&fit=crop",
+  steps: [
+    "Use vertical space with shelves and hangers",
+    "Select pots with proper drainage",
+    "Choose compact plants",
+    "Water carefully to avoid overflow",
+    "Rotate plants for even sunlight"
+    ]
+   }
   ];
 
   const essentials = [
