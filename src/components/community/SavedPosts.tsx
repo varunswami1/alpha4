@@ -42,7 +42,6 @@ type SavedItem = {
 
 const SavedPosts = () => {
   const [savedItems, setSavedItems] = useState<SavedItem[]>([
-    {
     //   id: 1,
     //   type: 'post',
     //   user: {
@@ -84,7 +83,7 @@ const SavedPosts = () => {
     //   comments: 14,
     //   saved: true,
     // },
-     {
+    {
       id: 1,
       type: 'post',
       user: {
