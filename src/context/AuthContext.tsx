@@ -1,163 +1,378 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  useEffect,
-} from "react";
+import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 interface User {
   id: string;
   email: string;
   firstName?: string;
   lastName?: string;
-}
-
-interface UserCredential extends User {
-  password: string;
+  avatarUrl?: string;
 }
 
 interface AuthContextType {
   user: User | null;
+  supabaseUser: SupabaseUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  signup: (email: string, password: string, firstName?: string, lastName?: string) => Promise<boolean>;
+  loginWithGoogle: () => Promise<void>;
+  logout: () => Promise<void>;
+  resetPassword: (email: string) => Promise<boolean>;
+  updatePassword: (newPassword: string) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [supabaseUser, setSupabaseUser] = useState<SupabaseUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Check for existing auth on mount
+  // Fetch user profile from database
+  const fetchUserProfile = async (userId: string, email: string) => {
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Error fetching profile:", error);
+        return { id: userId, email };
+      }
+
+      return {
+        id: userId,
+        email,
+        firstName: profile?.first_name || undefined,
+        lastName: profile?.last_name || undefined,
+        avatarUrl: profile?.avatar_url || undefined,
+      };
+    } catch (error) {
+      console.error("Error in fetchUserProfile:", error);
+      return { id: userId, email };
+    }
+  };
+
+  // Set up auth state listener
   useEffect(() => {
-    const checkLocalAuth = () => {
-      const storedUser = localStorage.getItem("user");
-      if (storedUser) {
-        try {
-          // Only store non-sensitive user info in the current session
-          setUser(JSON.parse(storedUser));
-        } catch (e) {
-          console.error("Failed to parse stored user data", e);
-          localStorage.removeItem("user");
+    // Set up auth state change listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log("Auth state changed:", event, session?.user?.id);
+        
+        if (session?.user) {
+          setSupabaseUser(session.user);
+          // Use setTimeout to avoid potential race conditions
+          setTimeout(async () => {
+            const userProfile = await fetchUserProfile(
+              session.user.id,
+              session.user.email || ''
+            );
+            setUser(userProfile);
+            setIsLoading(false);
+          }, 0);
+        } else {
+          setSupabaseUser(null);
+          setUser(null);
+          setIsLoading(false);
         }
       }
-      setIsLoading(false);
-    };
+    );
 
-    // Small timeout to simulate checking auth status
-    const timer = setTimeout(checkLocalAuth, 500);
-    return () => clearTimeout(timer);
+    // Then check for existing session
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (session?.user) {
+        setSupabaseUser(session.user);
+        const userProfile = await fetchUserProfile(
+          session.user.id,
+          session.user.email || ''
+        );
+        setUser(userProfile);
+      }
+      setIsLoading(false);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
-
+    
     try {
-      // Simple validation
-      if (!email || !email.includes("@") || password.length < 6) {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        console.error("Login error:", error);
         toast({
           variant: "destructive",
           title: "Login failed",
-          description:
-            "Please enter a valid email and password (min 6 characters).",
+          description: error.message,
         });
+        setIsLoading(false);
         return false;
       }
 
-      // Simulate network request with a delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Get all stored users
-      const storedUsersString = localStorage.getItem("users");
-      const storedUsers: UserCredential[] = storedUsersString
-        ? JSON.parse(storedUsersString)
-        : [];
-
-      // Check if user exists
-      const existingUser = storedUsers.find((u) => u.email === email);
-
-      if (existingUser) {
-        // User exists, verify password
-        if (existingUser.password !== password) {
-          toast({
-            variant: "destructive",
-            title: "Login failed",
-            description: "Incorrect password. Please try again.",
-          });
-          setIsLoading(false);
-          return false;
-        }
-
-        // Password is correct, log in user
-        const userWithoutPassword: User = {
-          id: existingUser.id,
-          email: existingUser.email,
-          firstName: existingUser.firstName,
-          lastName: existingUser.lastName,
-        };
-
-        setUser(userWithoutPassword);
-        localStorage.setItem("user", JSON.stringify(userWithoutPassword));
-
+      if (data.user) {
+        const userProfile = await fetchUserProfile(data.user.id, data.user.email || '');
+        setUser(userProfile);
+        setSupabaseUser(data.user);
+        
         toast({
-          title: "Login successful",
-          description: `Welcome back, ${
-            existingUser.firstName || email.split("@")[0]
-          }!`,
+          title: "Welcome back!",
+          description: `Logged in as ${userProfile.firstName || email}`,
         });
-
         setIsLoading(false);
         return true;
-      } else {
-        // User doesn't exist, redirect to signup
-        toast({
-          variant: "destructive",
-          title: "Account not found",
-          description:
-            "No account found with this email. Please sign up first.",
-        });
-
-        setIsLoading(false);
-        navigate("/signup");
-        return false;
       }
+
+      setIsLoading(false);
+      return false;
     } catch (error) {
       console.error("Login error:", error);
       toast({
         variant: "destructive",
         title: "Login failed",
-        description: "An error occurred during login. Please try again.",
+        description: "An unexpected error occurred. Please try again.",
       });
       setIsLoading(false);
       return false;
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("user");
-    toast({
-      title: "Logged out",
-      description: "You have been successfully logged out.",
-    });
-    navigate("/login");
+  const signup = async (
+    email: string, 
+    password: string, 
+    firstName?: string, 
+    lastName?: string
+  ): Promise<boolean> => {
+    setIsLoading(true);
+    
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: window.location.origin,
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+          }
+        }
+      });
+
+      if (error) {
+        console.error("Signup error:", error);
+        toast({
+          variant: "destructive",
+          title: "Signup failed",
+          description: error.message,
+        });
+        setIsLoading(false);
+        return false;
+      }
+
+      if (data.user) {
+        // Update profile with first and last name
+        if (firstName || lastName) {
+          await supabase
+            .from('profiles')
+            .update({
+              first_name: firstName,
+              last_name: lastName,
+            })
+            .eq('id', data.user.id);
+        }
+
+        // Check if email confirmation is required
+        if (data.user.identities && data.user.identities.length === 0) {
+          toast({
+            title: "Check your email",
+            description: "A confirmation link has been sent to your email address.",
+          });
+        } else if (!data.session) {
+          toast({
+            title: "Check your email",
+            description: "Please verify your email address to complete registration.",
+          });
+        } else {
+          const userProfile = await fetchUserProfile(data.user.id, data.user.email || '');
+          setUser(userProfile);
+          setSupabaseUser(data.user);
+          
+          toast({
+            title: "Account created!",
+            description: `Welcome, ${firstName || email}!`,
+          });
+        }
+        
+        setIsLoading(false);
+        return true;
+      }
+
+      setIsLoading(false);
+      return false;
+    } catch (error) {
+      console.error("Signup error:", error);
+      toast({
+        variant: "destructive",
+        title: "Signup failed",
+        description: "An unexpected error occurred. Please try again.",
+      });
+      setIsLoading(false);
+      return false;
+    }
+  };
+
+  const loginWithGoogle = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`,
+        }
+      });
+
+      if (error) {
+        console.error("Google login error:", error);
+        toast({
+          variant: "destructive",
+          title: "Google login failed",
+          description: error.message,
+        });
+      }
+    } catch (error) {
+      console.error("Google login error:", error);
+      toast({
+        variant: "destructive",
+        title: "Google login failed",
+        description: "An unexpected error occurred. Please try again.",
+      });
+    }
+  };
+
+  const logout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error("Logout error:", error);
+        toast({
+          variant: "destructive",
+          title: "Logout failed",
+          description: error.message,
+        });
+        return;
+      }
+
+      setUser(null);
+      setSupabaseUser(null);
+      
+      toast({
+        title: "Logged out",
+        description: "You have been successfully logged out.",
+      });
+      
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast({
+        variant: "destructive",
+        title: "Logout failed",
+        description: "An unexpected error occurred.",
+      });
+    }
+  };
+
+  const resetPassword = async (email: string): Promise<boolean> => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) {
+        console.error("Reset password error:", error);
+        toast({
+          variant: "destructive",
+          title: "Reset failed",
+          description: error.message,
+        });
+        return false;
+      }
+
+      toast({
+        title: "Check your email",
+        description: "A password reset link has been sent to your email address.",
+      });
+      return true;
+    } catch (error) {
+      console.error("Reset password error:", error);
+      toast({
+        variant: "destructive",
+        title: "Reset failed",
+        description: "An unexpected error occurred. Please try again.",
+      });
+      return false;
+    }
+  };
+
+  const updatePassword = async (newPassword: string): Promise<boolean> => {
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+
+      if (error) {
+        console.error("Update password error:", error);
+        toast({
+          variant: "destructive",
+          title: "Update failed",
+          description: error.message,
+        });
+        return false;
+      }
+
+      toast({
+        title: "Password updated",
+        description: "Your password has been successfully updated.",
+      });
+      return true;
+    } catch (error) {
+      console.error("Update password error:", error);
+      toast({
+        variant: "destructive",
+        title: "Update failed",
+        description: "An unexpected error occurred. Please try again.",
+      });
+      return false;
+    }
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
+        supabaseUser,
         isAuthenticated: !!user,
         isLoading,
         login,
+        signup,
+        loginWithGoogle,
         logout,
+        resetPassword,
+        updatePassword,
       }}
     >
       {children}

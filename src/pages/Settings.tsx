@@ -1,5 +1,5 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { 
   Languages, Globe, Clock, DollarSign, 
   Sun, Moon, Type, Zap, RotateCcw, 
@@ -7,10 +7,9 @@ import {
   Lock, MapPin, KeyRound, Download, BarChart4,
   User, Leaf, Heart, Mail, BrainCircuit,
   Smartphone, CloudUpload, Key, Share2, Mic,
-  HelpCircle, MessageCircle, Flag, FlaskConical
+  HelpCircle, MessageCircle, Flag, FlaskConical, Save, Loader
 } from "lucide-react";
-import { Link } from "react-router-dom";
-import Navigation from "@/components/landing/Navigation";
+import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -18,8 +17,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "@/context/ThemeContext";
+import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const SettingsSection = ({ 
   title, 
@@ -31,7 +33,7 @@ const SettingsSection = ({
   children: React.ReactNode;
 }) => {
   return (
-    <div className="mb-8 border rounded-lg p-6 bg-white shadow-sm">
+    <div className="mb-8 border rounded-lg p-6 bg-card shadow-sm">
       <div className="flex items-center gap-2 mb-4">
         <div className="text-primary">{icon}</div>
         <h2 className="text-xl font-semibold">{title}</h2>
@@ -66,473 +68,599 @@ const SettingItem = ({
   );
 };
 
+interface UserPreferences {
+  theme: string;
+  font_size: string;
+  email_notifications: boolean;
+  push_notifications: boolean;
+  account_visibility: string;
+  language: string;
+  currency: string;
+}
+
+interface Profile {
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  bio: string;
+  address_line: string;
+  state: string;
+  city: string;
+}
+
 const Settings = () => {
-  const [activeTab, setActiveTab] = useState("language");
+  const [activeTab, setActiveTab] = useState("appearance");
+  const { theme, setTheme } = useTheme();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  
+  const [preferences, setPreferences] = useState<UserPreferences>({
+    theme: 'light',
+    font_size: 'medium',
+    email_notifications: true,
+    push_notifications: false,
+    account_visibility: 'public',
+    language: 'english',
+    currency: 'INR',
+  });
+  
+  const [profile, setProfile] = useState<Profile>({
+    first_name: '',
+    last_name: '',
+    phone_number: '',
+    bio: '',
+    address_line: '',
+    state: '',
+    city: '',
+  });
+
+  // Fetch user preferences and profile
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!user) return;
+      
+      setLoading(true);
+      try {
+        // Fetch preferences
+        const { data: prefsData } = await supabase
+          .from('user_preferences')
+          .select('*')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        if (prefsData) {
+          setPreferences({
+            theme: prefsData.theme || 'light',
+            font_size: prefsData.font_size || 'medium',
+            email_notifications: prefsData.email_notifications ?? true,
+            push_notifications: prefsData.push_notifications ?? false,
+            account_visibility: prefsData.account_visibility || 'public',
+            language: prefsData.language || 'english',
+            currency: prefsData.currency || 'INR',
+          });
+          
+          // Apply theme from preferences
+          setTheme(prefsData.theme as 'light' | 'dark' | 'system');
+        }
+
+        // Fetch profile
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
+        
+        if (profileData) {
+          setProfile({
+            first_name: profileData.first_name || '',
+            last_name: profileData.last_name || '',
+            phone_number: profileData.phone_number || '',
+            bio: profileData.bio || '',
+            address_line: profileData.address_line || '',
+            state: profileData.state || '',
+            city: profileData.city || '',
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching settings:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [user]);
+
+  const handleThemeChange = (newTheme: string) => {
+    setTheme(newTheme as 'light' | 'dark' | 'system');
+    setPreferences(prev => ({ ...prev, theme: newTheme }));
+    savePreferences({ ...preferences, theme: newTheme });
+  };
+
+  const savePreferences = async (prefs: UserPreferences) => {
+    if (!user) return;
+    
+    try {
+      const { error } = await supabase
+        .from('user_preferences')
+        .update(prefs)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+      
+      toast({
+        title: "Settings saved",
+        description: "Your preferences have been updated.",
+      });
+    } catch (error) {
+      console.error("Error saving preferences:", error);
+      toast({
+        variant: "destructive",
+        title: "Save failed",
+        description: "Could not save your preferences.",
+      });
+    }
+  };
+
+  const saveProfile = async () => {
+    if (!user) return;
+    
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update(profile)
+        .eq('id', user.id);
+
+      if (error) throw error;
+      
+      toast({
+        title: "Profile updated",
+        description: "Your profile has been saved.",
+      });
+    } catch (error) {
+      console.error("Error saving profile:", error);
+      toast({
+        variant: "destructive",
+        title: "Save failed",
+        description: "Could not save your profile.",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete your account? This action cannot be undone."
+    );
+    
+    if (confirmed) {
+      toast({
+        title: "Account deletion",
+        description: "Please contact support to delete your account.",
+      });
+    }
+  };
+
+  const handleExportData = async () => {
+    if (!user) return;
+    
+    try {
+      // Fetch all user data
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      
+      const { data: plantsData } = await supabase
+        .from('user_plants')
+        .select('*')
+        .eq('user_id', user.id);
+      
+      const exportData = {
+        profile: profileData,
+        plants: plantsData,
+        exportDate: new Date().toISOString(),
+      };
+      
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'plantona-data-export.json';
+      link.click();
+      
+      toast({
+        title: "Data exported",
+        description: "Your data has been downloaded.",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Export failed",
+        description: "Could not export your data.",
+      });
+    }
+  };
+
+  if (loading) {
+    return (
+      <DashboardLayout title="Settings">
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      </DashboardLayout>
+    );
+  }
   
   return (
-    <div className="min-h-screen bg-neutral-100">
-      <Navigation />
-      <div className="pt-20 pb-10 px-4 max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">Settings</h1>
+    <DashboardLayout title="Settings">
+      <Tabs 
+        defaultValue="appearance" 
+        value={activeTab} 
+        onValueChange={setActiveTab}
+        className="w-full"
+      >
+        <TabsList className="w-full mb-6 flex flex-wrap h-auto p-1 bg-muted">
+          <TabsTrigger value="appearance" className="flex-1 py-2">Appearance</TabsTrigger>
+          <TabsTrigger value="profile" className="flex-1 py-2">Profile</TabsTrigger>
+          <TabsTrigger value="notifications" className="flex-1 py-2">Notifications</TabsTrigger>
+          <TabsTrigger value="privacy" className="flex-1 py-2">Privacy</TabsTrigger>
+          <TabsTrigger value="support" className="flex-1 py-2">Support</TabsTrigger>
+        </TabsList>
         
-        <Tabs 
-          defaultValue="language" 
-          value={activeTab} 
-          onValueChange={setActiveTab}
-          className="w-full"
-        >
-          <TabsList className="w-full mb-6 flex flex-wrap h-auto p-1 bg-neutral-200">
-            <TabsTrigger value="language" className="flex-1 py-2">Language & Regional</TabsTrigger>
-            <TabsTrigger value="appearance" className="flex-1 py-2">Appearance</TabsTrigger>
-            <TabsTrigger value="notifications" className="flex-1 py-2">Notifications</TabsTrigger>
-            <TabsTrigger value="privacy" className="flex-1 py-2">Privacy</TabsTrigger>
-            <TabsTrigger value="profile" className="flex-1 py-2">Profile</TabsTrigger>
-            <TabsTrigger value="connectivity" className="flex-1 py-2">Connectivity</TabsTrigger>
-            <TabsTrigger value="support" className="flex-1 py-2">Support</TabsTrigger>
-          </TabsList>
-          
-          {/* Language & Regional Settings */}
-          <TabsContent value="language">
-            <SettingsSection title="Language & Regional Settings" icon={<Globe className="w-5 h-5" />}>
-              <SettingItem 
-                icon={<Languages className="w-4 h-4" />} 
-                title="Language Selection"
-                description="Choose your preferred language"
+        {/* Appearance Settings */}
+        <TabsContent value="appearance">
+          <SettingsSection title="Appearance & Display" icon={<Sun className="w-5 h-5" />}>
+            <SettingItem 
+              icon={<Moon className="w-4 h-4" />} 
+              title="Theme Mode"
+              description="Choose your preferred app theme"
+            >
+              <Select 
+                value={theme} 
+                onValueChange={handleThemeChange}
               >
-                <Select defaultValue="english">
-                  <SelectTrigger className="w-32">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="english">English</SelectItem>
-                    <SelectItem value="hindi">Hindi</SelectItem>
-                    <SelectItem value="spanish">Spanish</SelectItem>
-                    <SelectItem value="french">French</SelectItem>
-                    <SelectItem value="german">German</SelectItem>
-                  </SelectContent>
-                </Select>
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<Clock className="w-4 h-4" />} 
-                title="Date & Time Format"
-                description="Choose your preferred time format"
+                <SelectTrigger className="w-28">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="light">Light</SelectItem>
+                  <SelectItem value="dark">Dark</SelectItem>
+                  <SelectItem value="system">System</SelectItem>
+                </SelectContent>
+              </Select>
+            </SettingItem>
+            
+            <SettingItem 
+              icon={<Type className="w-4 h-4" />} 
+              title="Font Size"
+              description="Adjust text size for better readability"
+            >
+              <Select 
+                value={preferences.font_size} 
+                onValueChange={(v) => {
+                  setPreferences(prev => ({ ...prev, font_size: v }));
+                  savePreferences({ ...preferences, font_size: v });
+                }}
               >
-                <RadioGroup defaultValue="12hour" className="flex space-x-4">
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="12hour" id="12hour" />
-                    <Label htmlFor="12hour">12-hour</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="24hour" id="24hour" />
-                    <Label htmlFor="24hour">24-hour</Label>
-                  </div>
-                </RadioGroup>
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<Globe className="w-4 h-4" />} 
-                title="Time Zone Auto-Detection"
-                description="Let the app detect your timezone automatically"
+                <SelectTrigger className="w-28">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="small">Small</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="large">Large</SelectItem>
+                </SelectContent>
+              </Select>
+            </SettingItem>
+            
+            <SettingItem 
+              icon={<Languages className="w-4 h-4" />} 
+              title="Language"
+              description="Choose your preferred language"
+            >
+              <Select 
+                value={preferences.language} 
+                onValueChange={(v) => {
+                  setPreferences(prev => ({ ...prev, language: v }));
+                  savePreferences({ ...preferences, language: v });
+                }}
               >
-                <Switch id="timezone-auto" />
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<DollarSign className="w-4 h-4" />} 
-                title="Currency for Purchases"
-                description="Select your preferred currency for transactions"
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="english">English</SelectItem>
+                  <SelectItem value="hindi">Hindi</SelectItem>
+                  <SelectItem value="spanish">Spanish</SelectItem>
+                  <SelectItem value="french">French</SelectItem>
+                </SelectContent>
+              </Select>
+            </SettingItem>
+            
+            <SettingItem 
+              icon={<DollarSign className="w-4 h-4" />} 
+              title="Currency"
+              description="Select your preferred currency"
+            >
+              <Select 
+                value={preferences.currency} 
+                onValueChange={(v) => {
+                  setPreferences(prev => ({ ...prev, currency: v }));
+                  savePreferences({ ...preferences, currency: v });
+                }}
               >
-                <Select defaultValue="inr">
-                  <SelectTrigger className="w-24">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="inr">INR</SelectItem>
-                    <SelectItem value="usd">USD</SelectItem>
-                    <SelectItem value="eur">EUR</SelectItem>
-                    <SelectItem value="gbp">GBP</SelectItem>
-                    <SelectItem value="jpy">JPY</SelectItem>
-                  </SelectContent>
-                </Select>
-              </SettingItem>
-            </SettingsSection>
-          </TabsContent>
-          
-          {/* Appearance & Display */}
-          <TabsContent value="appearance">
-            <SettingsSection title="Appearance & Display" icon={<Sun className="w-5 h-5" />}>
-              <SettingItem 
-                icon={<Moon className="w-4 h-4" />} 
-                title="Theme Mode"
-                description="Choose your preferred app theme"
-              >
-                <Select defaultValue="light">
-                  <SelectTrigger className="w-28">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="light">Light</SelectItem>
-                    <SelectItem value="dark">Dark</SelectItem>
-                    <SelectItem value="auto">Auto</SelectItem>
-                  </SelectContent>
-                </Select>
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<Type className="w-4 h-4" />} 
-                title="Font Size & Style"
-                description="Adjust text size for better readability"
-              >
-                <Select defaultValue="medium">
-                  <SelectTrigger className="w-28">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="small">Small</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="large">Large</SelectItem>
-                    <SelectItem value="custom">Custom</SelectItem>
-                  </SelectContent>
-                </Select>
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<Zap className="w-4 h-4" />} 
-                title="High Contrast Mode"
-                description="Enable for better visibility and accessibility"
-              >
-                <Switch id="high-contrast" />
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<RotateCcw className="w-4 h-4" />} 
-                title="Animations & Transitions"
-                description="Enable smooth animations throughout the app"
-              >
-                <Switch id="animations" defaultChecked />
-              </SettingItem>
-            </SettingsSection>
-          </TabsContent>
-          
-          {/* Notifications & Alerts */}
-          <TabsContent value="notifications">
-            <SettingsSection title="Notifications & Alerts" icon={<Bell className="w-5 h-5" />}>
-              <SettingItem 
-                icon={<Bell className="w-4 h-4" />} 
-                title="Notification Type"
-                description="Choose how you want to receive notifications"
-              >
+                <SelectTrigger className="w-24">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="INR">INR</SelectItem>
+                  <SelectItem value="USD">USD</SelectItem>
+                  <SelectItem value="EUR">EUR</SelectItem>
+                  <SelectItem value="GBP">GBP</SelectItem>
+                </SelectContent>
+              </Select>
+            </SettingItem>
+          </SettingsSection>
+        </TabsContent>
+        
+        {/* Profile Settings */}
+        <TabsContent value="profile">
+          <SettingsSection title="Profile Information" icon={<User className="w-5 h-5" />}>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="push-notify" defaultChecked />
-                    <Label htmlFor="push-notify">Push</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="email-notify" />
-                    <Label htmlFor="email-notify">Email</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="sms-notify" />
-                    <Label htmlFor="sms-notify">SMS</Label>
-                  </div>
+                  <Label htmlFor="firstName">First Name</Label>
+                  <Input 
+                    id="firstName" 
+                    value={profile.first_name}
+                    onChange={(e) => setProfile(prev => ({ ...prev, first_name: e.target.value }))}
+                    placeholder="John"
+                  />
                 </div>
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<Droplets className="w-4 h-4" />} 
-                title="Plant Care Reminders"
-                description="Get reminded about your plant care schedule"
-              >
                 <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="watering-reminder" defaultChecked />
-                    <Label htmlFor="watering-reminder">Watering</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="fertilizing-reminder" defaultChecked />
-                    <Label htmlFor="fertilizing-reminder">Fertilizing</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="pruning-reminder" defaultChecked />
-                    <Label htmlFor="pruning-reminder">Pruning</Label>
-                  </div>
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input 
+                    id="lastName" 
+                    value={profile.last_name}
+                    onChange={(e) => setProfile(prev => ({ ...prev, last_name: e.target.value }))}
+                    placeholder="Doe"
+                  />
                 </div>
-              </SettingItem>
+              </div>
               
-              <SettingItem 
-                icon={<Cloud className="w-4 h-4" />} 
-                title="Weather-Based Alerts"
-                description="Receive alerts based on local weather conditions"
-              >
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input 
+                  id="phone" 
+                  value={profile.phone_number}
+                  onChange={(e) => setProfile(prev => ({ ...prev, phone_number: e.target.value }))}
+                  placeholder="+91 98765 43210"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="bio">Bio</Label>
+                <Input 
+                  id="bio" 
+                  value={profile.bio}
+                  onChange={(e) => setProfile(prev => ({ ...prev, bio: e.target.value }))}
+                  placeholder="Tell us about yourself..."
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="address">Address</Label>
+                <Input 
+                  id="address" 
+                  value={profile.address_line}
+                  onChange={(e) => setProfile(prev => ({ ...prev, address_line: e.target.value }))}
+                  placeholder="123 Garden Street"
+                />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="frost-warning" defaultChecked />
-                    <Label htmlFor="frost-warning">Frost warning</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="heatwave-alert" defaultChecked />
-                    <Label htmlFor="heatwave-alert">Heatwave</Label>
-                  </div>
+                  <Label htmlFor="city">City</Label>
+                  <Input 
+                    id="city" 
+                    value={profile.city}
+                    onChange={(e) => setProfile(prev => ({ ...prev, city: e.target.value }))}
+                    placeholder="Mumbai"
+                  />
                 </div>
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<MessageSquare className="w-4 h-4" />} 
-                title="Community Updates"
-                description="Get notified about community activity"
-              >
                 <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="forum-replies" defaultChecked />
-                    <Label htmlFor="forum-replies">Forum replies</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="new-content" defaultChecked />
-                    <Label htmlFor="new-content">New content</Label>
-                  </div>
+                  <Label htmlFor="state">State</Label>
+                  <Input 
+                    id="state" 
+                    value={profile.state}
+                    onChange={(e) => setProfile(prev => ({ ...prev, state: e.target.value }))}
+                    placeholder="Maharashtra"
+                  />
                 </div>
-              </SettingItem>
+              </div>
               
-              <SettingItem 
-                icon={<ShoppingBag className="w-4 h-4" />} 
-                title="Shopping & Deals"
-                description="Receive notifications about sales and special offers"
+              <Button onClick={saveProfile} disabled={saving}>
+                {saving ? (
+                  <>
+                    <Loader className="mr-2 h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="mr-2 h-4 w-4" />
+                    Save Profile
+                  </>
+                )}
+              </Button>
+            </div>
+          </SettingsSection>
+        </TabsContent>
+        
+        {/* Notifications Settings */}
+        <TabsContent value="notifications">
+          <SettingsSection title="Notifications & Alerts" icon={<Bell className="w-5 h-5" />}>
+            <SettingItem 
+              icon={<Mail className="w-4 h-4" />} 
+              title="Email Notifications"
+              description="Receive updates via email"
+            >
+              <Switch 
+                checked={preferences.email_notifications}
+                onCheckedChange={(checked) => {
+                  setPreferences(prev => ({ ...prev, email_notifications: checked }));
+                  savePreferences({ ...preferences, email_notifications: checked });
+                }}
+              />
+            </SettingItem>
+            
+            <SettingItem 
+              icon={<Bell className="w-4 h-4" />} 
+              title="Push Notifications"
+              description="Receive push notifications on your device"
+            >
+              <Switch 
+                checked={preferences.push_notifications}
+                onCheckedChange={(checked) => {
+                  setPreferences(prev => ({ ...prev, push_notifications: checked }));
+                  savePreferences({ ...preferences, push_notifications: checked });
+                }}
+              />
+            </SettingItem>
+            
+            <SettingItem 
+              icon={<Droplets className="w-4 h-4" />} 
+              title="Plant Care Reminders"
+              description="Get reminded about watering and care tasks"
+            >
+              <Switch defaultChecked />
+            </SettingItem>
+            
+            <SettingItem 
+              icon={<Cloud className="w-4 h-4" />} 
+              title="Weather Alerts"
+              description="Receive alerts based on local weather"
+            >
+              <Switch defaultChecked />
+            </SettingItem>
+            
+            <SettingItem 
+              icon={<MessageSquare className="w-4 h-4" />} 
+              title="Community Updates"
+              description="Get notified about community activity"
+            >
+              <Switch defaultChecked />
+            </SettingItem>
+          </SettingsSection>
+        </TabsContent>
+        
+        {/* Privacy Settings */}
+        <TabsContent value="privacy">
+          <SettingsSection title="Privacy & Security" icon={<Lock className="w-5 h-5" />}>
+            <SettingItem 
+              icon={<Lock className="w-4 h-4" />} 
+              title="Account Privacy"
+              description="Control who can see your garden and activity"
+            >
+              <Select 
+                value={preferences.account_visibility}
+                onValueChange={(v) => {
+                  setPreferences(prev => ({ ...prev, account_visibility: v }));
+                  savePreferences({ ...preferences, account_visibility: v });
+                }}
               >
-                <Switch id="shopping-deals" defaultChecked />
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<Clock4 className="w-4 h-4" />} 
-                title="Quiet Hours"
-                description="Set times when you don't want to be disturbed"
-              >
-                <div className="flex space-x-2 items-center">
-                  <Input type="time" className="w-24" defaultValue="22:00" />
-                  <span>to</span>
-                  <Input type="time" className="w-24" defaultValue="07:00" />
-                </div>
-              </SettingItem>
-            </SettingsSection>
-          </TabsContent>
-          
-          {/* Privacy & Security */}
-          <TabsContent value="privacy">
-            <SettingsSection title="Privacy & Security" icon={<Lock className="w-5 h-5" />}>
-              <SettingItem 
-                icon={<Lock className="w-4 h-4" />} 
-                title="Account Privacy"
-                description="Control who can see your garden and activity"
-              >
-                <Select defaultValue="friends">
-                  <SelectTrigger className="w-32">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="public">Public</SelectItem>
-                    <SelectItem value="friends">Friends Only</SelectItem>
-                    <SelectItem value="private">Private</SelectItem>
-                  </SelectContent>
-                </Select>
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<MapPin className="w-4 h-4" />} 
-                title="Location Services"
-                description="Allow GPS for weather-based recommendations"
-              >
-                <Switch id="location-services" defaultChecked />
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<KeyRound className="w-4 h-4" />} 
-                title="Two-Factor Authentication (2FA)"
-                description="Add extra security to your account"
-              >
-                <Switch id="two-factor" />
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<Download className="w-4 h-4" />} 
-                title="Download & Delete Data"
-                description="Export or remove your plant care data"
-              >
-                <div className="flex space-x-2">
-                  <Button variant="outline" size="sm">Download</Button>
-                  <Button variant="destructive" size="sm">Delete</Button>
-                </div>
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<BarChart4 className="w-4 h-4" />} 
-                title="Ad Preferences"
-                description="Control personalized advertisements"
-              >
-                <Switch id="personalized-ads" defaultChecked />
-              </SettingItem>
-            </SettingsSection>
-          </TabsContent>
-          
-          {/* User Profile & Personalization */}
-          <TabsContent value="profile">
-            <SettingsSection title="User Profile & Personalization" icon={<User className="w-5 h-5" />}>
-              <SettingItem 
-                icon={<User className="w-4 h-4" />} 
-                title="Profile Picture & Name"
-                description="Customize how others see you"
-              >
-                <Button variant="outline" size="sm">Edit Profile</Button>
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<Leaf className="w-4 h-4" />} 
-                title="Gardening Level"
-                description="Set your experience level"
-              >
-                <Select defaultValue="intermediate">
-                  <SelectTrigger className="w-32">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="beginner">Beginner</SelectItem>
-                    <SelectItem value="intermediate">Intermediate</SelectItem>
-                    <SelectItem value="expert">Expert</SelectItem>
-                  </SelectContent>
-                </Select>
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<Heart className="w-4 h-4" />} 
-                title="Favourite Plant Categories"
-                description="Select your plant preferences"
-              >
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="indoor-plants" defaultChecked />
-                    <Label htmlFor="indoor-plants">Indoor</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="outdoor-plants" defaultChecked />
-                    <Label htmlFor="outdoor-plants">Outdoor</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="hydroponics" />
-                    <Label htmlFor="hydroponics">Hydroponics</Label>
-                  </div>
-                </div>
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<Mail className="w-4 h-4" />} 
-                title="Daily Summary Emails"
-                description="Receive daily plant care reports"
-              >
-                <Switch id="daily-summary" />
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<BrainCircuit className="w-4 h-4" />} 
-                title="Personalized AI Suggestions"
-                description="Get tailored plant recommendations"
-              >
-                <Switch id="ai-suggestions" defaultChecked />
-              </SettingItem>
-            </SettingsSection>
-          </TabsContent>
-          
-          {/* Connectivity & Integrations */}
-          <TabsContent value="connectivity">
-            <SettingsSection title="Connectivity & Integrations" icon={<Share2 className="w-5 h-5" />}>
-              <SettingItem 
-                icon={<Smartphone className="w-4 h-4" />} 
-                title="Smart Device Integration"
-                description="Connect to sensors and garden tech"
-              >
-                <Button variant="outline" size="sm">Connect Devices</Button>
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<CloudUpload className="w-4 h-4" />} 
-                title="Cloud Sync"
-                description="Back up your plant data to the cloud"
-              >
-                <Switch id="cloud-sync" defaultChecked />
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<Key className="w-4 h-4" />} 
-                title="API Access"
-                description="For third-party integrations"
-              >
-                <Button variant="outline" size="sm">Manage Keys</Button>
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<Share2 className="w-4 h-4" />} 
-                title="Social Media Sharing"
-                description="Share your garden progress on social media"
-              >
-                <Switch id="social-sharing" defaultChecked />
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<Mic className="w-4 h-4" />} 
-                title="Voice Assistant Support"
-                description="Connect to Google Assistant or Alexa"
-              >
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="google-assistant" />
-                    <Label htmlFor="google-assistant">Google Assistant</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="alexa" />
-                    <Label htmlFor="alexa">Alexa</Label>
-                  </div>
-                </div>
-              </SettingItem>
-            </SettingsSection>
-          </TabsContent>
-          
-          {/* Support & Help */}
-          <TabsContent value="support">
-            <SettingsSection title="Support & Help" icon={<HelpCircle className="w-5 h-5" />}>
-              <SettingItem 
-                icon={<HelpCircle className="w-4 h-4" />} 
-                title="FAQs & Tutorials"
-                description="Get help with common questions"
-              >
-                <Button variant="outline" size="sm">View Help Center</Button>
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<MessageCircle className="w-4 h-4" />} 
-                title="Live Chat Support"
-                description="Connect with gardening experts"
-              >
-                <Button variant="outline" size="sm">Start Chat</Button>
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<Flag className="w-4 h-4" />} 
-                title="Feedback & Bug Reporting"
-                description="Help us improve the app"
-              >
-                <Button variant="outline" size="sm">Send Feedback</Button>
-              </SettingItem>
-              
-              <SettingItem 
-                icon={<FlaskConical className="w-4 h-4" />} 
-                title="Beta Features"
-                description="Try experimental features"
-              >
-                <Switch id="beta-features" />
-              </SettingItem>
-            </SettingsSection>
-          </TabsContent>
-        </Tabs>
-      </div>
-    </div>
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="public">Public</SelectItem>
+                  <SelectItem value="friends">Friends Only</SelectItem>
+                  <SelectItem value="private">Private</SelectItem>
+                </SelectContent>
+              </Select>
+            </SettingItem>
+            
+            <SettingItem 
+              icon={<MapPin className="w-4 h-4" />} 
+              title="Location Services"
+              description="Allow GPS for weather-based recommendations"
+            >
+              <Switch defaultChecked />
+            </SettingItem>
+            
+            <SettingItem 
+              icon={<Download className="w-4 h-4" />} 
+              title="Export Your Data"
+              description="Download all your plant care data"
+            >
+              <Button variant="outline" size="sm" onClick={handleExportData}>
+                Export Data
+              </Button>
+            </SettingItem>
+            
+            <SettingItem 
+              icon={<BarChart4 className="w-4 h-4" />} 
+              title="Delete Account"
+              description="Permanently delete your account and all data"
+            >
+              <Button variant="destructive" size="sm" onClick={handleDeleteAccount}>
+                Delete Account
+              </Button>
+            </SettingItem>
+          </SettingsSection>
+        </TabsContent>
+        
+        {/* Support Settings */}
+        <TabsContent value="support">
+          <SettingsSection title="Support & Help" icon={<HelpCircle className="w-5 h-5" />}>
+            <SettingItem 
+              icon={<HelpCircle className="w-4 h-4" />} 
+              title="Help Center"
+              description="Get help with common questions"
+            >
+              <Button variant="outline" size="sm" onClick={() => navigate('/help')}>
+                View Help
+              </Button>
+            </SettingItem>
+            
+            <SettingItem 
+              icon={<MessageCircle className="w-4 h-4" />} 
+              title="Send Feedback"
+              description="Help us improve the app"
+            >
+              <Button variant="outline" size="sm" onClick={() => navigate('/rate')}>
+                Send Feedback
+              </Button>
+            </SettingItem>
+            
+            <SettingItem 
+              icon={<Flag className="w-4 h-4" />} 
+              title="Report a Bug"
+              description="Let us know about any issues"
+            >
+              <Button variant="outline" size="sm" onClick={() => navigate('/help')}>
+                Report Bug
+              </Button>
+            </SettingItem>
+            
+            <SettingItem 
+              icon={<FlaskConical className="w-4 h-4" />} 
+              title="Beta Features"
+              description="Try experimental features"
+            >
+              <Switch />
+            </SettingItem>
+          </SettingsSection>
+        </TabsContent>
+      </Tabs>
+    </DashboardLayout>
   );
 };
 
