@@ -140,19 +140,19 @@ const LearningResources = () => {
 },
 {
   id: 7,
-  title: "Soil Types and How to Improve Them",
-  thumbnail: "https://i.ytimg.com/vi/dlGQ9YzZ2ZQ/maxresdefault.jpg",
-  duration: "10 min",
-  description: "Understand soil composition and how to make it perfect for plant growth.",
-  videoId: "dlGQ9YzZ2ZQ"
+  title: "Gardening for Beginners: Plants, Soil and Pro Tips",
+  thumbnail: "https://i.ytimg.com/vi/H1yh2euwhBc/hqdefault.jpg",
+  duration: "14 min",
+  description: "An easy guide to plant care basics, choosing soil, and practical gardening tips for beginners.",
+  videoId: "H1yh2euwhBc"
 },
 {
   id: 8,
-  title: "Beginner Guide to Composting",
-  thumbnail: "https://i.ytimg.com/vi/0dS6b0pHk3Y/maxresdefault.jpg",
+  title: "Pruning Plants is 10x Easier When You Know This",
+  thumbnail: "https://i.ytimg.com/vi/ypuVwJN33Vk/hqdefault.jpg",
   duration: "9 min",
-  description: "Turn kitchen waste into nutrient-rich compost for your garden.",
-  videoId: "0dS6b0pHk3Y"
+  description: "Learn smart pruning tips to keep your plants healthy, encourage growth, and prevent disease.",
+  videoId: "ypuVwJN33Vk"
 }
 
   ];
