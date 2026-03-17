@@ -108,9 +108,9 @@ export const mockProducts: Product[] = [
   discountedPrice: 19.99,
   stockStatus: "In Stock",
   images: [
-    "/images/others/GardeningToolKit1.jpg",
-    "/images/others/GardeningToolKit2.jpg",
-    "/images/others/GardeningToolKit3.jpg"
+    "/images/others/GradeningToolKit1.jpg",
+    "/images/others/GradeningToolKit2.jpg",
+    "/images/others/GdeningToolKit3.jpg"
   ],
   hasVideo: false,
   rating: 4.4,
