@@ -133,7 +133,7 @@ export const mockProducts: Product[] = [
   discountedPrice: 40.49,
   stockStatus: "In Stock",
   images: [
-    "/images/others/autoWateringSystem.jpg",
+    "/images/others/autowateringSystem.jpg",
     "/images/others/autoWateringSystem2.jpg",
     "/images/others/autoWateringSystem3.jpg"
   ],
