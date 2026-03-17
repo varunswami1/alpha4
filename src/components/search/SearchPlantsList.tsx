@@ -4,9 +4,23 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Droplets, Sun, Clock, DollarSign, Sprout } from "lucide-react";
+interface Plant {
+  id: string;
+  name: string;
+  scientificName: string;
+  description: string;
+  category: string;
+  difficulty: "Easy" | "Medium" | "Hard";
+  image: string;
+  waterNeeds: string;
+  sunlightNeeds: string;
+  growthTime: string;
+  cost: string;
+  companionPlants: string[];
+}
 
 // Sample plant data
-const plantsData = [
+const plantsData: Plant[] = [
   {
     id: "1",
     name: "Tomato",
@@ -398,6 +412,314 @@ const plantsData = [
   growthTime: "6-12 months",
   cost: "low",
   companionPlants: ["Neem", "Tulsi", "Aloe Vera"]
+},
+  {
+  id: "29",
+  name: "Cactus",
+  scientificName: "Cactaceae",
+  description: "A drought-resistant succulent known for surviving in extreme dry conditions.",
+  category: "Succulent",
+  difficulty: "Easy",
+  image: "/images/others/cactus.jpeg",
+  waterNeeds: "low",
+  sunlightNeeds: "full",
+  growthTime: "Slow growth",
+  cost: "low",
+  companionPlants: ["Aloe Vera", "Agave"]
+},
+{
+  id: "30",
+  name: "Mint",
+  scientificName: "Mentha",
+  description: "A fast-growing herb used in beverages and cooking.",
+  category: "Herb",
+  difficulty: "Easy",
+  image: "/images/others/mint.jpeg",
+  waterNeeds: "high",
+  sunlightNeeds: "partial",
+  growthTime: "30-45 days",
+  cost: "low",
+  companionPlants: ["Cabbage", "Tomato"]
+},
+{
+  id: "31",
+  name: "Parsley",
+  scientificName: "Petroselinum crispum",
+  description: "A nutritious herb commonly used for garnishing and cooking.",
+  category: "Herb",
+  difficulty: "Medium",
+  image: "/images/others/parsley.jpeg",
+  waterNeeds: "medium",
+  sunlightNeeds: "partial",
+  growthTime: "70-90 days",
+  cost: "low",
+  companionPlants: ["Tomato", "Chives"]
+},
+{
+  id: "32",
+  name: "Chili",
+  scientificName: "Capsicum frutescens",
+  description: "A spicy vegetable widely used in cooking.",
+  category: "Vegetable",
+  difficulty: "Medium",
+  image: "/images/others/chili.jpeg",
+  waterNeeds: "medium",
+  sunlightNeeds: "full",
+  growthTime: "60-80 days",
+  cost: "low",
+  companionPlants: ["Tomato", "Basil"]
+},
+{
+  id: "33",
+  name: "Dracaena",
+  scientificName: "Dracaena",
+  description: "An indoor ornamental plant known for its long leaves and air-purifying properties.",
+  category: "Indoor",
+  difficulty: "Easy",
+  image: "/images/others/dracaena.jpeg",
+  waterNeeds: "low",
+  sunlightNeeds: "partial",
+  growthTime: "Slow growth",
+  cost: "medium",
+  companionPlants: ["Snake Plant", "ZZ Plant"]
+},
+{
+  id: "34",
+  name: "ZZ Plant",
+  scientificName: "Zamioculcas zamiifolia",
+  description: "A hardy indoor plant that thrives in low light and requires minimal care.",
+  category: "Indoor",
+  difficulty: "Easy",
+  image: "/images/others/zz-plant.jpeg",
+  waterNeeds: "low",
+  sunlightNeeds: "shade",
+  growthTime: "Slow growth",
+  cost: "medium",
+  companionPlants: ["Snake Plant", "Pothos"]
+},
+{
+  id: "35",
+  name: "Areca Palm",
+  scientificName: "Dypsis lutescens",
+  description: "A decorative indoor palm that enhances air quality.",
+  category: "Indoor",
+  difficulty: "Medium",
+  image: "/images/others/areca.jpeg",
+  waterNeeds: "medium",
+  sunlightNeeds: "partial",
+  growthTime: "Moderate growth",
+  cost: "medium",
+  companionPlants: ["Fern", "Peace Lily"]
+},
+{
+  id: "36",
+  name: "Rubber Plant",
+  scientificName: "Ficus elastica",
+  description: "A popular indoor plant with large glossy leaves.",
+  category: "Indoor",
+  difficulty: "Easy",
+  image: "/images/others/rubber-plant.jpeg",
+  waterNeeds: "low",
+  sunlightNeeds: "partial",
+  growthTime: "Moderate growth",
+  cost: "medium",
+  companionPlants: ["Snake Plant", "Pothos"]
+},
+{
+  id: "37",
+  name: "Anthurium",
+  scientificName: "Anthurium andraeanum",
+  description: "A beautiful indoor flowering plant with bright red blooms.",
+  category: "Flower",
+  difficulty: "Medium",
+  image: "/images/others/anthurium.jpeg",
+  waterNeeds: "medium",
+  sunlightNeeds: "partial",
+  growthTime: "Slow growth",
+  cost: "high",
+  companionPlants: ["Orchid", "Fern"]
+},
+{
+  id: "38",
+  name: "Begonia",
+  scientificName: "Begonia",
+  description: "A decorative flowering plant suitable for indoor and outdoor use.",
+  category: "Flower",
+  difficulty: "Medium",
+  image: "/images/others/begonia.jpeg",
+  waterNeeds: "medium",
+  sunlightNeeds: "partial",
+  growthTime: "Moderate growth",
+  cost: "medium",
+  companionPlants: ["Coleus", "Petunia"]
+},
+{
+  id: "39",
+  name: "Calendula",
+  scientificName: "Calendula officinalis",
+  description: "A medicinal flowering plant known for its healing properties.",
+  category: "Medicinal",
+  difficulty: "Easy",
+  image: "/images/others/calendula.jpeg",
+  waterNeeds: "medium",
+  sunlightNeeds: "full",
+  growthTime: "45-60 days",
+  cost: "low",
+  companionPlants: ["Tomato", "Basil"]
+},
+{
+  id: "40",
+  name: "Thyme",
+  scientificName: "Thymus vulgaris",
+  description: "A small aromatic herb used in cooking and medicine.",
+  category: "Herb",
+  difficulty: "Easy",
+  image: "/images/others/thyme.jpeg",
+  waterNeeds: "low",
+  sunlightNeeds: "full",
+  growthTime: "60-90 days",
+  cost: "low",
+  companionPlants: ["Rosemary", "Lavender"]
+},
+{
+  id: "41",
+  name: "Jade Plant",
+  scientificName: "Crassula ovata",
+  description: "A succulent known as a symbol of prosperity and good luck.",
+  category: "Succulent",
+  difficulty: "Easy",
+  image: "/images/others/jade.jpeg",
+  waterNeeds: "low",
+  sunlightNeeds: "partial",
+  growthTime: "Slow growth",
+  cost: "low",
+  companionPlants: ["Cactus", "Aloe Vera"]
+},
+{
+  id: "42",
+  name: "Coleus",
+  scientificName: "Plectranthus scutellarioides",
+  description: "A colorful ornamental plant grown for its vibrant leaves.",
+  category: "Flower",
+  difficulty: "Easy",
+  image: "/images/others/coleus.jpeg",
+  waterNeeds: "medium",
+  sunlightNeeds: "partial",
+  growthTime: "Fast growth",
+  cost: "low",
+  companionPlants: ["Begonia", "Petunia"]
+},
+{
+  id: "43",
+  name: "English Ivy",
+  scientificName: "Hedera helix",
+  description: "A climbing plant used for walls and indoor decoration.",
+  category: "Indoor",
+  difficulty: "Easy",
+  image: "/images/others/ivy.jpeg",
+  waterNeeds: "medium",
+  sunlightNeeds: "shade",
+  growthTime: "Fast growth",
+  cost: "low",
+  companionPlants: ["Fern", "Pothos"]
+},
+{
+  id: "44",
+  name: "Pothos",
+  scientificName: "Epipremnum aureum",
+  description: "A trailing indoor plant known for its air-purifying ability.",
+  category: "Indoor",
+  difficulty: "Easy",
+  image: "/images/others/pothos.jpeg",
+  waterNeeds: "low",
+  sunlightNeeds: "partial",
+  growthTime: "Fast growth",
+  cost: "low",
+  companionPlants: ["Snake Plant", "ZZ Plant"]
+},
+{
+  id: "45",
+  name: "Geranium",
+  scientificName: "Pelargonium",
+  description: "A colorful flowering plant ideal for gardens and balconies.",
+  category: "Flower",
+  difficulty: "Easy",
+  image: "/images/others/geranium.jpeg",
+  waterNeeds: "medium",
+  sunlightNeeds: "full",
+  growthTime: "60-90 days",
+  cost: "medium",
+  companionPlants: ["Petunia", "Marigold"]
+},
+{
+  id: "46",
+  name: "Petunia",
+  scientificName: "Petunia",
+  description: "A popular ornamental flower with vibrant colors.",
+  category: "Flower",
+  difficulty: "Easy",
+  image: "/images/others/petunia.jpeg",
+  waterNeeds: "medium",
+  sunlightNeeds: "full",
+  growthTime: "45-60 days",
+  cost: "low",
+  companionPlants: ["Geranium", "Marigold"]
+},
+{
+  id: "47",
+  name: "Dahlia",
+  scientificName: "Dahlia",
+  description: "A vibrant flowering plant with large decorative blooms.",
+  category: "Flower",
+  difficulty: "Medium",
+  image: "/images/others/dahlia.jpeg",
+  waterNeeds: "medium",
+  sunlightNeeds: "full",
+  growthTime: "90-120 days",
+  cost: "medium",
+  companionPlants: ["Petunia", "Marigold"]
+},
+{
+  id: "48",
+  name: "Bonsai",
+  scientificName: "Various species",
+  description: "A miniature tree grown in containers requiring careful maintenance.",
+  category: "Indoor",
+  difficulty: "Hard",
+  image: "/images/others/bonsai.jpeg",
+  waterNeeds: "medium",
+  sunlightNeeds: "partial",
+  growthTime: "Years",
+  cost: "high",
+  companionPlants: []
+},
+{
+  id: "49",
+  name: "Cypress Tree",
+  scientificName: "Cupressus",
+  description: "An evergreen tree used in landscaping and decoration.",
+  category: "Tree",
+  difficulty: "Medium",
+  image: "/images/others/cypress.jpeg",
+  waterNeeds: "medium",
+  sunlightNeeds: "full",
+  growthTime: "Years",
+  cost: "medium",
+  companionPlants: []
+},
+{
+  id: "50",
+  name: "Oak Tree",
+  scientificName: "Quercus",
+  description: "A strong long-living tree providing shade and ecological value.",
+  category: "Tree",
+  difficulty: "Medium",
+  image: "/images/others/oak.jpeg",
+  waterNeeds: "medium",
+  sunlightNeeds: "full",
+  growthTime: "Years",
+  cost: "medium",
+  companionPlants: ["Clover"]
 }
 ];
 
@@ -449,8 +771,8 @@ const SearchPlantsList: React.FC<SearchPlantsListProps> = ({
       break;
     case "easy-grow":
       filteredPlants = [...filteredPlants].sort((a, b) => {
-        const difficultyMap: Record<string, number> = {"Easy": 1,"Medium": 2,"Hard": 3 };
-        return (difficultyMap[a.difficulty] || 3) - (difficultyMap[b.difficulty] || 3);
+       const difficultyMap: Record<string, number> = { easy: 1,medium: 2,hard: 3 };
+          return (difficultyMap[a.difficulty.toLowerCase()] || 3) - (difficultyMap[b.difficulty.toLowerCase()] || 3);
       });
       break;
     // Add other sort options as needed
