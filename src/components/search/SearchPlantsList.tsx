@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Droplets, Sun, Clock, DollarSign, Sprout } from "lucide-react";
+import { Droplets, Sun, Clock, DollarSign } from "lucide-react";
 interface Plant {
   id: string;
   name: string;
@@ -758,7 +758,7 @@ const SearchPlantsList: React.FC<SearchPlantsListProps> = ({
         const costMap: Record<string, number> = {
           "very low": 1, "low": 2, "medium": 3, "high": 4, "very high": 5
         };
-        return (costMap[a.cost] || 3) - (costMap[b.cost] || 3);
+        return (costMap[a.cost.toLowerCase()] || 3) - (costMap[b.cost.toLowerCase()] || 3);
       });
       break;
     case "high-cost":
@@ -766,7 +766,7 @@ const SearchPlantsList: React.FC<SearchPlantsListProps> = ({
         const costMap: Record<string, number> = {
           "very low": 1, "low": 2, "medium": 3, "high": 4, "very high": 5
         };
-        return (costMap[b.cost] || 3) - (costMap[a.cost] || 3);
+        return (costMap[b.cost.toLowerCase()] || 3) - (costMap[a.cost.toLowerCase()] || 3);
       });
       break;
     case "easy-grow":
