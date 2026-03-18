@@ -2519,12 +2519,13 @@ const PlantInfoPage = () => {
                   
                   <TabsContent value="overview" className="space-y-4 mt-4">
                     <div className="aspect-video overflow-hidden rounded-md">
-                      <img 
-                        src={plant.image} 
-                        alt={plant.name} 
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+                    <img src={ plant.image.includes("unsplash") ? `${plant.image}?auto=format&fit=crop&w=800&q=80` : plant.image }
+                    alt={plant.name}
+                      className="w-full h-full object-cover"
+                    onError={(e) => {
+                  e.currentTarget.src =  "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=800&q=80";}}
+  />
+</div>
                     
                     <div>
                       <h3 className="font-medium mb-2">Description</h3>
