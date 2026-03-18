@@ -971,7 +971,8 @@ const plantData = [
   soilpH: "6.2-6.8",
   fertilizingSchedule: "Every 3 weeks",
   photos: [
-    { id: "p1", url:  "/images/searchimages/coriander.jpeg", date: "2024-03-25", caption: "Fresh leaves" }
+    {
+      id: "p1", url:  "/images/searchimages/coriander.jpeg", date: "2024-03-25", caption: "Fresh leaves" }
   ],
   alerts: [
     {
