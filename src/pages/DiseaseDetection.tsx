@@ -135,7 +135,7 @@ const DiseaseDetection = () => {
       formData.append("lat", lat.toString());
       formData.append("lon", lon.toString());
 
-      const response = await fetch("http://10.55.110.49:5001/predict", {
+      const response = await fetch("http://172.17.122.201:5001/predict", {
         method: "POST",
         body: formData,
       });
@@ -284,8 +284,8 @@ const DiseaseDetection = () => {
                   <div className="bg-muted/50 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="font-semibold text-lg">{result.disease_name}</h3>
-                      <Badge variant={result.confidence > 0.8 ? "destructive" : "secondary"}>
-                        {(result.confidence * 100).toFixed(1)}% Confidence
+                      <Badge variant={result.confidence > 80 ? "destructive" : "secondary"}>
+                        {result.confidence.toFixed(1)}% Confidence
                       </Badge>
                     </div>
                     <div className="flex gap-2 mb-3">
@@ -349,18 +349,19 @@ const DiseaseDetection = () => {
                   </div>
 
                   {/* Care Tips */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <div className="bg-muted/50 rounded-lg p-3 border">
-                      <h5 className="font-medium text-sm mb-1">💧 Watering</h5>
-                      <p className="text-xs text-muted-foreground">{result.care_water}</p>
+                  <div className="space-y-3">
+                    <h4 className="font-semibold">🌿 Care Tips</h4>
+                    <div className="bg-muted/50 rounded-lg p-4 border">
+                      <h5 className="font-medium text-sm mb-2">💧 Watering</h5>
+                      <p className="text-sm text-muted-foreground">{result.care_water}</p>
                     </div>
-                    <div className="bg-muted/50 rounded-lg p-3 border">
-                      <h5 className="font-medium text-sm mb-1">☀️ Sunlight</h5>
-                      <p className="text-xs text-muted-foreground">{result.care_sunlight}</p>
+                    <div className="bg-muted/50 rounded-lg p-4 border">
+                      <h5 className="font-medium text-sm mb-2">☀️ Sunlight</h5>
+                      <p className="text-sm text-muted-foreground">{result.care_sunlight}</p>
                     </div>
-                    <div className="bg-muted/50 rounded-lg p-3 border">
-                      <h5 className="font-medium text-sm mb-1">🌱 Soil</h5>
-                      <p className="text-xs text-muted-foreground">{result.care_soil}</p>
+                    <div className="bg-muted/50 rounded-lg p-4 border">
+                      <h5 className="font-medium text-sm mb-2">🌱 Soil</h5>
+                      <p className="text-sm text-muted-foreground">{result.care_soil}</p>
                     </div>
                   </div>
                 </div>
