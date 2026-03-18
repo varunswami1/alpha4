@@ -140,7 +140,7 @@ const plantsData: Plant[] = [
   description: "A medicinal succulent known for its healing gel.",
   category: "Medicinal",
   difficulty: "Easy",
-  image: "/images/others/aloe.jpeg",
+  image: "https://images.unsplash.com/photo-1587502537745-84e6b3c9e56d" ,
   waterNeeds: "low",
   sunlightNeeds: "partial",
   growthTime: "6-12 months",
