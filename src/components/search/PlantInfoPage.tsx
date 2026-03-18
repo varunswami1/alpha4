@@ -432,7 +432,7 @@ p7: {
   beneficialCritters: [
     { name: "Bees", benefit: "Pollination" }
   ],
-  image: "/images/others/lavender.jpeg",
+  image: "https://images.unsplash.com/photo-1524594154908-edd8c94df7b1",
 },
 
 p9: {
@@ -480,7 +480,7 @@ p9: {
   beneficialCritters: [
     { name: "None significant", benefit: "Naturally resistant plant" }
   ],
-  image: "/images/others/aloe.jpeg",
+  image: "https://images.unsplash.com/photo-1587502537745-84e6b3c9e56d" ,
 },
 
 p10: {
@@ -529,7 +529,7 @@ p10: {
   beneficialCritters: [
     { name: "None significant", benefit: "Low pest issues" }
   ],
-  image: "/images/others/snake-plant.jpeg",
+  image: "https://images.unsplash.com/photo-1587502536263-3f6d1a36c4c7",
 },
   p11: {
   id: "p11",
@@ -577,7 +577,7 @@ p10: {
   beneficialCritters: [
     { name: "None significant", benefit: "Low pest issues" }
   ],
-  image: "/images/others/money-plant.jpeg",
+  image: "https://images.unsplash.com/photo-1587300003388-59208cc962cb",
 },
 
 p12: {
@@ -625,7 +625,7 @@ p12: {
   beneficialCritters: [
     { name: "Birds", benefit: "Natural pest control" }
   ],
-  image: "/images/others/neem.jpeg",
+  image: "https://images.unsplash.com/photo-1598514982841-8f3c9f7a4b9b",
 },
 
 p13: {
@@ -674,7 +674,7 @@ p13: {
   beneficialCritters: [
     { name: "Bees", benefit: "Pollination" }
   ],
-  image: "/images/others/tulsi.jpeg",
+  image: "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2",
 },
   p14: {
   id: "p14",
@@ -722,7 +722,7 @@ p13: {
   beneficialCritters: [
     { name: "None significant", benefit: "Indoor plant" }
   ],
-  image: "/images/others/orchid.jpeg",
+  image: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6" ,
 },
 
 p15: {
@@ -771,7 +771,7 @@ p15: {
   beneficialCritters: [
     { name: "Bees", benefit: "Pollination" }
   ],
-  image: "/images/others/hibiscus.jpeg",
+  image: "https://images.unsplash.com/photo-1597848212624-a19eb35e2651",
 },
 
 p16: {
@@ -820,7 +820,7 @@ p16: {
   beneficialCritters: [
     { name: "Ladybugs", benefit: "Control aphids" }
   ],
-  image: "/images/others/rose.jpeg",
+  image: "https://images.unsplash.com/photo-1496861083958-175bb1bd5702",
 },
   p17: {
   id: "p17",
@@ -868,7 +868,7 @@ p16: {
   beneficialCritters: [
     { name: "Bees", benefit: "Pollination" }
   ],
-  image: "/images/others/mango.jpeg",
+  image:"https://images.unsplash.com/photo-1553279768-865429fa0078?auto=format&fit=crop&w=800&q=80",,
 },
 
 p18: {
@@ -917,7 +917,7 @@ p18: {
   beneficialCritters: [
     { name: "Earthworms", benefit: "Improve soil fertility" }
   ],
-  image: "/images/others/banana.jpeg",
+  image: "https://images.unsplash.com/photo-1574226516831-e1dff420e37f",
 },
 
 p19: {
@@ -966,7 +966,7 @@ p19: {
   beneficialCritters: [
     { name: "Bees", benefit: "Pollination" }
   ],
-  image: "/images/others/guava.jpeg",
+  image: "https://images.unsplash.com/photo-1590080877777-95c9f0c0b4f3",
 },
   p20: {
   id: "p20",
@@ -1014,7 +1014,7 @@ p19: {
   beneficialCritters: [
     { name: "Birds", benefit: "Natural pest control" }
   ],
-  image: "/images/others/coconut.jpeg",
+  image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
 },
 
 p21: {
@@ -1063,7 +1063,7 @@ p21: {
   beneficialCritters: [
     { name: "Pandas (wild)", benefit: "Natural ecosystem role" }
   ],
-  image: "/images/others/bamboo.jpeg",
+  image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9",
 },
 
 p22: {
@@ -1112,7 +1112,7 @@ p22: {
   beneficialCritters: [
     { name: "None", benefit: "Indoor plant" }
   ],
-  image: "/images/others/fern.jpeg",
+  image: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6",
 },
   p23: {
   id: "p23",
@@ -1160,7 +1160,7 @@ p22: {
   beneficialCritters: [
     { name: "None", benefit: "Indoor plant" }
   ],
-  image: "/images/others/peace-lily.jpeg",
+  image: "https://images.unsplash.com/photo-1492724441997-5dc865305da7",
 },
 
 p24: {
@@ -1209,7 +1209,7 @@ p24: {
   beneficialCritters: [
     { name: "None", benefit: "Indoor plant" }
   ],
-  image: "/images/others/spider-plant.jpeg",
+  image: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6",
 },
 
 p25: {
@@ -1258,7 +1258,7 @@ p25: {
   beneficialCritters: [
     { name: "Bees", benefit: "Pollination" }
   ],
-  image: "/images/others/papaya.jpeg",
+  image: "https://images.unsplash.com/photo-1587049352851-8d4e89133924",
 },
   p26: {
   id: "p26",
@@ -1306,7 +1306,7 @@ p25: {
   beneficialCritters: [
     { name: "Bees", benefit: "Pollination" }
   ],
-  image: "/images/others/jasmine.jpeg",
+  image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93",
 },
 
 p27: {
@@ -1355,7 +1355,7 @@ p27: {
   beneficialCritters: [
     { name: "Ladybugs", benefit: "Eat harmful insects" }
   ],
-  image: "/images/others/marigold.jpeg",
+  image: "https://images.unsplash.com/photo-1524594157365-90f27a4e4cba",
 },
 
 p28: {
@@ -1404,7 +1404,7 @@ p28: {
   beneficialCritters: [
     { name: "Bees", benefit: "Pollination" }
   ],
-  image: "/images/others/moringa.jpeg",
+  image: "https://images.unsplash.com/photo-1587049352851-8d4e89133924",
 },
   p29: {
   id: "p29",
@@ -1453,7 +1453,7 @@ p28: {
   beneficialCritters: [
     { name: "None", benefit: "Low pest attraction" }
   ],
-  image: "/images/others/cactus.jpeg",
+  image: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6",
 },
 
 p30: {
@@ -1502,7 +1502,7 @@ p30: {
   beneficialCritters: [
     { name: "Bees", benefit: "Pollination" }
   ],
-  image: "/images/others/mint.jpeg",
+  image: "https://images.unsplash.com/photo-1506806732259-39c2d0268443",
 },
 
 p31: {
@@ -1551,7 +1551,7 @@ p31: {
   beneficialCritters: [
     { name: "Ladybugs", benefit: "Control aphids" }
   ],
-  image: "/images/others/parsley.jpeg",
+  image: "https://images.unsplash.com/photo-1502741338009-cac2772e18bc",
 },
   p32: {
   id: "p32",
@@ -1600,7 +1600,7 @@ p31: {
   beneficialCritters: [
     { name: "Ladybugs", benefit: "Eat aphids" }
   ],
-  image: "/images/others/chili.jpeg",
+  image: "https://images.unsplash.com/photo-1592928302636-c83cf1e1c887",
 },
 
 p33: {
@@ -1649,7 +1649,7 @@ p33: {
   beneficialCritters: [
     { name: "None", benefit: "Indoor plant" }
   ],
-  image: "/images/others/dracaena.jpeg",
+  image: "https://images.unsplash.com/photo-1598887142487-0f0b9c5b4c12",
 },
 
 p34: {
@@ -1696,7 +1696,7 @@ p34: {
   beneficialCritters: [
     { name: "None", benefit: "Indoor plant" }
   ],
-  image: "/images/others/zz.jpeg",
+  image: "https://images.unsplash.com/photo-1600411833117-1a2c8a1f0c1c",
 },
   p35: {
   id: "p35",
@@ -1744,7 +1744,7 @@ p34: {
   beneficialCritters: [
     { name: "Bees", benefit: "Pollination when flowering" }
   ],
-  image: "/images/others/agave.jpeg",
+  image: "https://images.unsplash.com/photo-1587502537745-84e6b3c9e56d",
 },
 
 p36: {
@@ -1792,7 +1792,7 @@ p36: {
   beneficialCritters: [
     { name: "None", benefit: "Indoor plant" }
   ],
-  image: "/images/others/areca-palm.jpeg",
+  image: "https://images.unsplash.com/photo-1593482892290-f54927ae2b03" ,
 },
 
 p37: {
@@ -1839,7 +1839,7 @@ p37: {
   beneficialCritters: [
     { name: "Birds", benefit: "Ecosystem support" }
   ],
-  image: "/images/others/peepal.jpeg",
+  image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9",
 },
   p38: {
   id: "p38",
@@ -1887,7 +1887,7 @@ p37: {
   beneficialCritters: [
     { name: "None", benefit: "Indoor plant" }
   ],
-  image: "/images/others/rubber-plant.jpeg",
+  image: "https://images.unsplash.com/photo-1598887142487-0f0b9c5b4c12" ,
 },
 
 p39: {
@@ -1936,7 +1936,7 @@ p39: {
   beneficialCritters: [
     { name: "None", benefit: "Indoor plant" }
   ],
-  image: "/images/others/croton.jpeg",
+  image: "https://images.unsplash.com/photo-1598887142487-0f0b9c5b4c12",
 },
 
 p40: {
@@ -1985,7 +1985,7 @@ p40: {
   beneficialCritters: [
     { name: "None", benefit: "Indoor plant" }
   ],
-  image: "/images/others/anthurium.jpeg",
+  image: "https://images.unsplash.com/photo-1592155931584-901ac15763e3",
 },
   p41: {
   id: "p41",
@@ -2033,7 +2033,7 @@ p40: {
   beneficialCritters: [
     { name: "None", benefit: "Indoor plant" }
   ],
-  image: "/images/others/jade.jpeg",
+  image: "https://images.unsplash.com/photo-1592841200221-a6898f307baa",
 },
 
 p42: {
@@ -2082,7 +2082,7 @@ p42: {
   beneficialCritters: [
     { name: "Bees", benefit: "Pollination (flowering stage)" }
   ],
-  image: "/images/others/coleus.jpeg",
+  image: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6",
 },
 
 p43: {
@@ -2131,7 +2131,7 @@ p43: {
   beneficialCritters: [
     { name: "None", benefit: "Indoor plant" }
   ],
-  image: "/images/others/ivy.jpeg",
+  image: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6",
 },
   p44: {
   id: "p44",
@@ -2179,7 +2179,7 @@ p43: {
   beneficialCritters: [
     { name: "None", benefit: "Indoor plant" }
   ],
-  image: "/images/others/pothos.jpeg",
+  image: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6",
 },
 
 p45: {
@@ -2228,7 +2228,7 @@ p45: {
   beneficialCritters: [
     { name: "Bees", benefit: "Pollination" }
   ],
-  image: "/images/others/geranium.jpeg",
+  image: "https://images.unsplash.com/photo-1598899134739-24c46f58b8d4",
 },
 
 p46: {
@@ -2277,7 +2277,7 @@ p46: {
   beneficialCritters: [
     { name: "Butterflies", benefit: "Pollination" }
   ],
-  image: "/images/others/petunia.jpeg",
+  image: "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce",
 },
   p47: {
   id: "p47",
@@ -2325,7 +2325,7 @@ p46: {
   beneficialCritters: [
     { name: "Bees", benefit: "Pollination" }
   ],
-  image: "/images/others/dahlia.jpeg",
+  image: "https://images.unsplash.com/photo-1597848212624-a19eb35e2651",
 },
 
 p48: {
@@ -2367,7 +2367,7 @@ p48: {
     { name: "Root Rot", symptoms: "Weak growth", prevention: "Proper drainage" }
   ],
   beneficialCritters: [],
-  image: "/images/others/bonsai.jpeg",
+  image: "https://images.unsplash.com/photo-1519681393784-d120267933ba" ,
 },
 
 p49: {
@@ -2411,7 +2411,7 @@ p49: {
   beneficialCritters: [
     { name: "Birds", benefit: "Habitat" }
   ],
-  image: "/images/others/cypress.jpeg",
+  image: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6",
 },
 
 p50: {
@@ -2459,7 +2459,7 @@ p50: {
   beneficialCritters: [
     { name: "Birds", benefit: "Habitat and ecosystem support" }
   ],
-  image: "/images/others/oak.jpeg",
+  image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470",
 },
   // More plant data would go here in a real application
 };
