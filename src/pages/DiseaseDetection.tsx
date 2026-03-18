@@ -10,10 +10,16 @@ import { toast } from "@/hooks/use-toast";
 interface DiseaseResult {
   disease_name: string;
   confidence: number;
+  disease_type: string;
+  final_risk: number;
+  severity_level: string;
   cause: string;
   treatment: string;
   prevention: string;
-  final_risk: number;
+  care_water: string;
+  care_sunlight: string;
+  care_soil: string;
+  action_required: string;
 }
 
 const DiseaseDetection = () => {
@@ -129,7 +135,7 @@ const DiseaseDetection = () => {
       formData.append("lat", lat.toString());
       formData.append("lon", lon.toString());
 
-      const response = await fetch("http://10.58.164.253:5001/predict", {
+      const response = await fetch("http://172.17.122.201:5001/predict", {
         method: "POST",
         body: formData,
       });
@@ -273,8 +279,8 @@ const DiseaseDetection = () => {
             </CardHeader>
             <CardContent>
               {result ? (
-                <div className="space-y-6">
-                  {/* Disease Name & Confidence */}
+                <div className="space-y-4">
+                  {/* Disease Name, Type & Confidence */}
                   <div className="bg-muted/50 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="font-semibold text-lg">{result.disease_name}</h3>
@@ -282,9 +288,15 @@ const DiseaseDetection = () => {
                         {(result.confidence * 100).toFixed(1)}% Confidence
                       </Badge>
                     </div>
-                    
+                    <div className="flex gap-2 mb-3">
+                      <Badge variant="outline">{result.disease_type}</Badge>
+                      <Badge variant={result.severity_level === "High" ? "destructive" : "secondary"}>
+                        {result.severity_level} Severity
+                      </Badge>
+                    </div>
+
                     {/* Final Risk */}
-                    <div className="mt-4">
+                    <div>
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-sm font-medium">Overall Risk Level</span>
                         <span className={`font-bold ${getScoreColor(result.final_risk)}`}>
@@ -293,13 +305,20 @@ const DiseaseDetection = () => {
                       </div>
                       <div className="relative">
                         <Progress value={result.final_risk} className="h-3" />
-                        <Badge 
-                          className={`absolute -top-1 right-0 ${getRiskLevel(result.final_risk).color}`}
-                        >
+                        <Badge className={`absolute -top-1 right-0 ${getRiskLevel(result.final_risk).color}`}>
                           {getRiskLevel(result.final_risk).label} Risk
                         </Badge>
                       </div>
                     </div>
+                  </div>
+
+                  {/* Action Required */}
+                  <div className="bg-destructive/10 rounded-lg p-4 border border-destructive/30">
+                    <h4 className="font-semibold text-destructive mb-2 flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4" />
+                      Action Required
+                    </h4>
+                    <p className="text-sm">{result.action_required}</p>
                   </div>
 
                   {/* Cause */}
@@ -308,9 +327,7 @@ const DiseaseDetection = () => {
                       <AlertTriangle className="h-4 w-4" />
                       Cause
                     </h4>
-                    <p className="text-sm text-amber-700 dark:text-amber-300">
-                      {result.cause}
-                    </p>
+                    <p className="text-sm text-amber-700 dark:text-amber-300">{result.cause}</p>
                   </div>
 
                   {/* Treatment */}
@@ -319,9 +336,7 @@ const DiseaseDetection = () => {
                       <Shield className="h-4 w-4" />
                       Recommended Treatment
                     </h4>
-                    <p className="text-sm text-green-700 dark:text-green-300">
-                      {result.treatment}
-                    </p>
+                    <p className="text-sm text-green-700 dark:text-green-300">{result.treatment}</p>
                   </div>
 
                   {/* Prevention */}
@@ -330,9 +345,23 @@ const DiseaseDetection = () => {
                       <Shield className="h-4 w-4" />
                       Prevention Tips
                     </h4>
-                    <p className="text-sm text-blue-700 dark:text-blue-300">
-                      {result.prevention}
-                    </p>
+                    <p className="text-sm text-blue-700 dark:text-blue-300">{result.prevention}</p>
+                  </div>
+
+                  {/* Care Tips */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="bg-muted/50 rounded-lg p-3 border">
+                      <h5 className="font-medium text-sm mb-1">💧 Watering</h5>
+                      <p className="text-xs text-muted-foreground">{result.care_water}</p>
+                    </div>
+                    <div className="bg-muted/50 rounded-lg p-3 border">
+                      <h5 className="font-medium text-sm mb-1">☀️ Sunlight</h5>
+                      <p className="text-xs text-muted-foreground">{result.care_sunlight}</p>
+                    </div>
+                    <div className="bg-muted/50 rounded-lg p-3 border">
+                      <h5 className="font-medium text-sm mb-1">🌱 Soil</h5>
+                      <p className="text-xs text-muted-foreground">{result.care_soil}</p>
+                    </div>
                   </div>
                 </div>
               ) : (
