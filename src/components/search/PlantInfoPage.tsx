@@ -2466,7 +2466,7 @@ p50: {
 
 const PlantInfoPage = () => {
   const { id } = useParams<{ id: string }>();
-  const plant = plantInfoData[id as keyof typeof plantInfoData];
+  const plant = plantInfoData[`p${id}` as keyof typeof plantInfoData];
   
   if (!plant) {
     return (
