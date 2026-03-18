@@ -1014,7 +1014,7 @@ p19: {
   beneficialCritters: [
     { name: "Birds", benefit: "Natural pest control" }
   ],
-  image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+  image: "https://images.unsplash.com/photo-1560364897-91578ff4180c?auto=format&fit=crop&w=800&q=80",
 },
 
 p21: {
@@ -2411,7 +2411,7 @@ p49: {
   beneficialCritters: [
     { name: "Birds", benefit: "Habitat" }
   ],
-  image: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6",
+  image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80",
 },
 
 p50: {
