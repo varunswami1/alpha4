@@ -1014,7 +1014,7 @@ const plantData = [
   soilType: "Well-drained soil",
   soilpH: "6.0-7.5",
   fertilizingSchedule: "Monthly",
-  photos: [],
+  photos: [ { id: "p1", url:  "/images/searchimages/marigold.jpeg", date: "2024-03-25", caption: "Fresh leaves" }],
   alerts: [
     {
       id: "a1",
