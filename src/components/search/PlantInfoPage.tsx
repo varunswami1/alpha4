@@ -480,7 +480,7 @@ p9: {
   beneficialCritters: [
     { name: "None significant", benefit: "Naturally resistant plant" }
   ],
-  image: "/images/others/aloe.jpeg",
+  image: "/images/searchimages/aloe.jpeg",
 },
 
 p10: {
