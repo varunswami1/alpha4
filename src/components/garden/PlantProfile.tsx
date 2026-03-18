@@ -267,10 +267,7 @@ const plantData = [
   type: "Succulent",
   scientificName: "Aloe barbadensis miller",
   description: "A medicinal succulent plant known for its thick, fleshy leaves filled with soothing gel used for skin care and healing.",
-  images: [
-    "https://images.unsplash.com/photo-1593691509543-c55fb32e5b2c?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1587502536263-9298c8c9d68d?auto=format&fit=crop&w=800&q=80",
-  ],
+  images: '/images/searchimages/aloe.jpeg',
   health: 95,
   lifeCycleStage: "Growth",
   lifeCycleProgress: 60,
