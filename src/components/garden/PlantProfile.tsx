@@ -349,7 +349,7 @@ const plantData = [
     },
     {
       id: "p2",
-      url:  "/images/searchimages/money-plant.jpeg",,
+      url:  "/images/searchimages/money-plant.jpeg",
       date: "2024-03-25",
       caption: "Healthy growth"
     }
@@ -655,7 +655,7 @@ const plantData = [
   photos: [
     {
       id: "p1",
-      url:  "/images/searchimages/cactus.jpeg",,
+      url:  "/images/searchimages/cactus.jpeg",
       date: "2024-02-01",
       caption: "Indoor cactus"
     }
