@@ -1,6 +1,5 @@
 import Navigation from "@/components/landing/Navigation";
 import Hero from "@/components/landing/Hero";
-import TrustedBy from "@/components/landing/TrustedBy";
 import Footer from "@/components/landing/Footer";
 import GardeningInfo from "@/components/landing/GardeningInfo";
 import Testimonials from "@/components/landing/Testimonials";
@@ -17,7 +16,6 @@ const Index = () => {
         <GardeningInfo />
         <Testimonials />
         <GardeningStats />
-        <TrustedBy />
         <Footer />
       </div>
     </div>
