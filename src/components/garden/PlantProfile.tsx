@@ -488,7 +488,7 @@ const plantData = [
   type: "Flowering Plant",
   scientificName: "Orchidaceae",
   description: "An elegant and exotic flowering plant known for its stunning, long-lasting blooms. Orchids are perfect for indoor decoration and add a luxurious touch to any space.",
-  images: ["/images/searchimages/neem.jpeg"],
+  images: ["/images/searchimages/orchid.jpeg"],
   health: 87,
   lifeCycleStage: "Flowering",
   lifeCycleProgress: 75,
@@ -508,7 +508,7 @@ const plantData = [
   photos: [
     {
       id: "p1",
-      url: "/images/searchimages/neem.jpeg",
+      url: "/images/searchimages/orchid.jpeg",
       date: "2024-03-15",
       caption: "Beautiful bloom"
     }
@@ -606,7 +606,7 @@ const plantData = [
   photos: [
     {
       id: "p1",
-      url: "/images/searchimages/sunflower.jpeg",,
+      url: "/images/searchimages/sunflower.jpeg",
       date: "2024-06-01",
       caption: "Full bloom sunflower"
     }
@@ -1015,7 +1015,9 @@ const plantData = [
   soilType: "Well-drained soil",
   soilpH: "6.0-7.5",
   fertilizingSchedule: "Monthly",
-  photos:[],
+  photos:[
+    { id: "p1", url: "/images/searchimages/marigold.jpeg", date: "2024-04-20", caption: "Blooming marigold" }
+  ],
   alerts: [
     {
       id: "a1",
