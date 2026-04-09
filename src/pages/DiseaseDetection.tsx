@@ -1,3 +1,4 @@
+
 import { useState, useRef } from "react";
 import { Upload, Leaf, AlertTriangle, Activity, Shield, Camera } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
@@ -135,7 +136,7 @@ const DiseaseDetection = () => {
       formData.append("lat", lat.toString());
       formData.append("lon", lon.toString());
 
-      const response = await fetch("http://192.168.0.159:5001/predict", {
+      const response = await fetch("http://http://127.0.0.1:5001", {
         method: "POST",
         body: formData,
       });
