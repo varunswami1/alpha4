@@ -136,7 +136,7 @@ const DiseaseDetection = () => {
       formData.append("lat", lat.toString());
       formData.append("lon", lon.toString());
 
-      const response = await fetch("http://127.0.0.1:5001", {
+      const response = await fetch("http://10.53.147.77:5001", {
         method: "POST",
         body: formData,
       });
